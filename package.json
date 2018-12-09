@@ -1,0 +1,14 @@
+{
+  "name": "@bankify/redux-persist-realm",
+  "version": "0.1.0",
+  "description": "Realm storage engine for redux persist",
+  "main": "index.js",
+  "repository": "https://github.com/bankifyio/redux-persist-realm",
+  "author": "Luong Dang Hai <luong@bankify.io>",
+  "license": "MIT",
+  "private": false,
+  "peerDependencies": {
+    "realm": "*",
+    "redux-persist": "*"
+  }
+}
