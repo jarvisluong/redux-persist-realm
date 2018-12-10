@@ -55,7 +55,8 @@ export function createRealmPersistStorage({ path }) {
 
   async function getItem(key, callback) {
     return withCallback(callback, async function() {
-      const matches = await accessItemInstances().filtered((name = `${key}`));
+      const items = await accessItemInstances();
+      const matches = items.filtered((name = `${key}`));
       if (matches.length > 0 && matches[0]) {
         return matches[0].content;
       } else {
