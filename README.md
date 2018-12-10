@@ -1,4 +1,4 @@
-# redux-persist-realm
+# redux-persist-realm [![Actively Maintained](https://maintained.tech/badge.svg)](https://maintained.tech/) [![npm version](https://badge.fury.io/js/%40bankify%2Fredux-persist-realm.svg)](https://badge.fury.io/js/%40bankify%2Fredux-persist-realm)
 
 Redux persist support for Realm database by using key/value approach
 
