@@ -45,7 +45,7 @@ function createRealmAccess(path = Realm.defaultPath) {
   };
 }
 
-export function createRealmPersistStorage({ path }) {
+export function createRealmPersistStorage({ path } = {}) {
   const accessRealm = createRealmAccess(path);
 
   async function accessItemInstances() {
