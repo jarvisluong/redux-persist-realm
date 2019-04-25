@@ -1,6 +1,6 @@
 {
   "name": "@bankify/redux-persist-realm",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Realm storage engine for redux persist",
   "main": "index.js",
   "repository": "https://github.com/bankifyio/redux-persist-realm",
