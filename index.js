@@ -34,8 +34,7 @@ function createRealmAccess(path = Realm.defaultPath) {
       try {
         __realm = await Realm.open({
           schema: [ITEM_SCHEMA],
-          path,
-          inMemory: true
+          path
         });
       } catch (error) {
         throw error;
@@ -56,7 +55,7 @@ export function createRealmPersistStorage({ path } = {}) {
   async function getItem(key, callback) {
     return withCallback(callback, async function() {
       const items = await accessItemInstances();
-      const matches = items.filtered((name = `${key}`));
+      const matches = items.filtered(`name = "${key}"`);
       if (matches.length > 0 && matches[0]) {
         return matches[0].content;
       } else {
@@ -86,7 +85,7 @@ export function createRealmPersistStorage({ path } = {}) {
       const realm = await accessRealm();
       const items = await accessItemInstances();
       realm.write(() => {
-        const item = items.filtered((name = `${key}`));
+        const item = items.filtered(`name = "${key}"`);
         realm.delete(item);
       });
     });
