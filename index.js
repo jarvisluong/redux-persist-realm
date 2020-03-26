@@ -27,14 +27,15 @@ async function withCallback(callback, func) {
   }
 }
 
-function createRealmAccess(path = Realm.defaultPath) {
+function createRealmAccess({ path, encryptionKey } = { path: Realm.defaultPath }) {
   let __realm = null;
   return async function accessRealm() {
     if (!__realm) {
       try {
         __realm = await Realm.open({
           schema: [ITEM_SCHEMA],
-          path
+          path,
+          encryptionKey,
         });
       } catch (error) {
         throw error;
@@ -44,8 +45,8 @@ function createRealmAccess(path = Realm.defaultPath) {
   };
 }
 
-export function createRealmPersistStorage({ path } = {}) {
-  const accessRealm = createRealmAccess(path);
+export function createRealmPersistStorage(realmConfig) {
+  const accessRealm = createRealmAccess(realmConfig);
 
   async function accessItemInstances() {
     const realm = await accessRealm();
