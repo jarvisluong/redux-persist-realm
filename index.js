@@ -1,13 +1,30 @@
 import Realm from "realm";
 
+const FRAGMENT_SIZE = 16000000; // Limit of 16 MB per string
 const ITEM_SCHEMA = {
   name: "ReduxPersistItem",
   primaryKey: "name",
   properties: {
     name: "string",
-    content: "string"
+    fragments: "string[]"
   }
 };
+
+class ItemSchema {
+  static schema = ITEM_SCHEMA;
+
+  get content() {
+    return this.fragments.join("");
+  }
+}
+          
+function fragmentString(str) {
+  const fragments = [];
+  for (let i = 0; (i * FRAGMENT_SIZE) < str.length; i++) {
+    fragments.push(str.substr(i * FRAGMENT_SIZE, FRAGMENT_SIZE));
+  }
+  return fragments;
+}
 
 // Wrap function to support both Promise and callback
 // Copied from repo https://github.com/Nohac/redux-persist-expo-fs-storage/blob/master/index.js
@@ -33,8 +50,19 @@ function createRealmAccess(path = Realm.defaultPath) {
     if (!__realm) {
       try {
         __realm = await Realm.open({
-          schema: [ITEM_SCHEMA],
-          path
+          schema: [ItemSchema],
+          schemaVersion: 1,
+          path,
+          migration: (oldRealm, newRealm) => {
+            if (oldRealm.schemaVersion < 1) {
+              const oldItems = oldRealm.objects(ITEM_SCHEMA.name);
+              const newItems = oldRealm.objects(ITEM_SCHEMA.name);
+              
+              for (let i = 0; i < oldItems.length; i++) {
+                newItems[i].fragments = fragmentString(oldItems[i].content);
+              }
+            }
+          },
         });
       } catch (error) {
         throw error;
@@ -49,7 +77,7 @@ export function createRealmPersistStorage({ path } = {}) {
 
   async function accessItemInstances() {
     const realm = await accessRealm();
-    return realm.objects(ITEM_SCHEMA.name);
+    return realm.objects(ItemSchema);
   }
 
   async function getItem(key, callback) {
@@ -72,9 +100,9 @@ export function createRealmPersistStorage({ path } = {}) {
           ITEM_SCHEMA.name,
           {
             name: key,
-            content: value
+            fragments: fragmentString(value),
           },
-          true
+          Realm.UpdateMode.Modified
         );
       });
     });
